@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  devPing:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Runtime: nodejs12.x
+      CodeUri: build/get_ping
+      Handler: index.handler
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /ping
+            Method: get
+      PackageType: Zip
+  getMsg:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Runtime: nodejs12.x
+      CodeUri: build/get_msg
+      Handler: index.handler
+      Policies: AmazonRDSDataFullAccess
+      Environment:
+        Variables:
+          LOCAL_URL: $LOCAL_URL
+          REGION: $REGION
+          RESOURCE_ARN: $RESOURCE_ARN
+          SECRET_ARN: $SECRET_ARN
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /msg/{id}
+            Method: get
+      PackageType: Zip
+  postMsg:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Runtime: nodejs12.x
+      CodeUri: build/post_msg
+      Handler: index.handler
+      Policies: AmazonRDSDataFullAccess
+      Environment:
+        Variables:
+          LOCAL_URL: $LOCAL_URL
+          REGION: $REGION
+          RESOURCE_ARN: $RESOURCE_ARN
+          SECRET_ARN: $SECRET_ARN
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /msg
+            Method: post
+      PackageType: Zip
